@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import android.content.Intent
 import android.provider.Settings
@@ -9,7 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.zcshou.gogogo.databinding.ActivityMainNavBinding
+import com.taibao.app.databinding.ActivityMainNavBinding
 import com.zcshou.utils.GoUtils
 import dagger.hilt.android.AndroidEntryPoint
 import tech.jour.template.base.mvvm.vm.EmptyViewModel

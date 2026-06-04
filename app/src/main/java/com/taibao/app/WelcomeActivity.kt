@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -20,7 +20,7 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.permissionx.guolindev.PermissionX
-import com.zcshou.gogogo.databinding.ActivityWelcomeBinding
+import com.taibao.app.databinding.ActivityWelcomeBinding
 import tech.jour.template.base.ktx.clickDelay
 import tech.jour.template.base.utils.toast
 import tech.jour.template.common.ui.BaseActivity

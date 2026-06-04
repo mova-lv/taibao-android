@@ -7,10 +7,10 @@ plugins {
 }
 
 android {
-	namespace = "com.zcshou.gogogo"
+	namespace = "com.taibao.app"
 	compileSdk = 35
 	defaultConfig {
-		applicationId = "com.zcshou.gogogo"
+		applicationId = "com.taibao.app"
 		minSdk = 26
 		targetSdk = 33
 		versionCode = 1

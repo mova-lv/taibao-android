@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -24,10 +24,10 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.AttachPopupView
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.enums.PopupPosition
-import com.zcshou.gogogo.databinding.FragmentMapBinding
-import com.zcshou.gogogo.databinding.ItemLocationHistorySearchBinding
-import com.zcshou.gogogo.databinding.PopMapSearchBinding
-import com.zcshou.gogogo.databinding.PopMapTypeBinding
+import com.taibao.app.databinding.FragmentMapBinding
+import com.taibao.app.databinding.ItemLocationHistorySearchBinding
+import com.taibao.app.databinding.PopMapSearchBinding
+import com.taibao.app.databinding.PopMapTypeBinding
 import com.zcshou.utils.myLocation
 import com.zcshou.utils.requestLocation
 import com.zcshou.utils.sugSearch

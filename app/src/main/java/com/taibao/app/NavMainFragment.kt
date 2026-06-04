@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.zcshou.gogogo.databinding.FragmentNavMainBinding
-import com.zcshou.gogogo.databinding.ItemLocationHistoryBinding
+import com.taibao.app.databinding.FragmentNavMainBinding
+import com.taibao.app.databinding.ItemLocationHistoryBinding
 import com.zcshou.utils.GoUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

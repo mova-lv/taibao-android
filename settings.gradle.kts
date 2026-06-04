@@ -23,6 +23,6 @@ dependencyResolutionManagement {
 	}
 }
 
-rootProject.name = "FakeLocation"
+rootProject.name = "Taibao"
 include(":app")
  

@@ -1,7 +1,7 @@
 package tech.jour.template.module
 
 import androidx.activity.viewModels
-import com.zcshou.gogogo.databinding.ActivityMainNavBinding
+import com.taibao.app.databinding.ActivityMainNavBinding
 import dagger.hilt.android.AndroidEntryPoint
 import tech.jour.template.base.mvvm.vm.EmptyViewModel
 import tech.jour.template.common.ui.BaseActivity

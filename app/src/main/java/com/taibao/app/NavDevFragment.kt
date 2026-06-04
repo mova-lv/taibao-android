@@ -1,8 +1,8 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import androidx.fragment.app.viewModels
-import com.zcshou.gogogo.databinding.ActivityMainNavBinding
-import com.zcshou.gogogo.databinding.FragmentNavDevBinding
+import com.taibao.app.databinding.ActivityMainNavBinding
+import com.taibao.app.databinding.FragmentNavDevBinding
 import dagger.hilt.android.AndroidEntryPoint
 import tech.jour.template.base.mvvm.vm.EmptyViewModel
 import tech.jour.template.common.ui.BaseFragment

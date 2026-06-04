@@ -6,21 +6,17 @@
     app:startDestination="@id/navMainFragment">
   <fragment
       android:id="@+id/navMainFragment"
-      android:name="com.zcshou.gogogo.NavMainFragment"
+      android:name="com.taibao.app.NavMainFragment"
       android:label="@string/app_name"
       tools:layout="@layout/fragment_nav_main" />
   <fragment
-      android:id="@+id/nav_settings"
-      android:name="com.zcshou.gogogo.FragmentSettings"
-      android:label="@string/app_settings" />
-  <fragment
       android:id="@+id/mapFragment"
-      android:name="com.zcshou.gogogo.MapFragment"
+      android:name="com.taibao.app.MapFragment"
       android:label="选择位置"
       tools:layout="@layout/fragment_map" />
   <fragment
       android:id="@+id/nav_dev"
-      android:name="com.zcshou.gogogo.NavDevFragment"
+      android:name="com.taibao.app.NavDevFragment"
       android:label="开发者设置"
       tools:layout="@layout/fragment_nav_dev" />
 

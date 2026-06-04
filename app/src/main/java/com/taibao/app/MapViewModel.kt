@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.zcshou.gogogo
+package com.taibao.app
 
 import tech.jour.template.common.model.db.LocalLocationBean
 import tech.jour.template.common.room.AppDatabase

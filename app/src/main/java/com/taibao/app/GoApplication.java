@@ -1,4 +1,4 @@
-package com.zcshou.gogogo;
+package com.taibao.app;
 
 import com.baidu.location.LocationClient;
 import com.baidu.mapapi.CoordType;

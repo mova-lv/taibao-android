@@ -9,7 +9,7 @@ import com.google.auto.service.AutoService
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
-import com.zcshou.gogogo.BuildConfig
+import com.taibao.app.BuildConfig
 import tech.jour.template.base.BaseApplication
 import tech.jour.template.base.app.ApplicationLifecycle
 import tech.jour.template.base.utils.ForegroundBackgroundObserver

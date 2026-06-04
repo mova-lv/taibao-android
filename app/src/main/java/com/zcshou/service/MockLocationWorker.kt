@@ -153,6 +153,10 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
 
 	private fun addTestProviderNetwork() {
 		try {
+			// 先清理可能残留的 network test provider
+			try {
+				mLocManager.removeTestProvider(LocationManager.NETWORK_PROVIDER)
+			} catch (_: IllegalArgumentException) { }
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 				mLocManager.addTestProvider(
 					LocationManager.NETWORK_PROVIDER, true, false,
@@ -174,6 +178,10 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
 
 	private fun addTestProviderGPS() {
 		try {
+			// 先清理可能残留的 gps test provider
+			try {
+				mLocManager.removeTestProvider(LocationManager.GPS_PROVIDER)
+			} catch (_: IllegalArgumentException) { }
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 				mLocManager.addTestProvider(
 					LocationManager.GPS_PROVIDER, false, true, false,
@@ -195,9 +203,9 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
 	private fun removeTestProvider() {
 		try {
 			mLocManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, false)
-			mLocManager.removeTestProvider(LocationManager.NETWORK_PROVIDER)
+				mLocManager.removeTestProvider(LocationManager.NETWORK_PROVIDER)
 			mLocManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, false)
-			mLocManager.removeTestProvider(LocationManager.GPS_PROVIDER)
+				mLocManager.removeTestProvider(LocationManager.GPS_PROVIDER)
 		} catch (e: java.lang.Exception) {
 		}
 	}

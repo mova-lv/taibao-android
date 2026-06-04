@@ -72,7 +72,7 @@
     <!-- 百度地图开发者 Key -->
     <meta-data
         android:name="com.baidu.lbsapi.API_KEY"
-        android:value="4I7LZvnx0Fmo33VoUThYJC1iDBMIBR3m" />
+        android:value="YJkn4aDoGOCdGoZFsbOCR22zemaRVPFK" />
     <!-- 百度地图 间隔定位必须配置此service否则功能无效 -->
     <service
         android:name="com.baidu.location.f"

@@ -87,6 +87,14 @@ public class GoUtils {
         try {
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);//获得LocationManager引用
 
+            // 先清理可能残留的 test provider（防止上次崩溃后未清理）
+            try {
+                locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+                locationManager.removeTestProvider(LocationManager.NETWORK_PROVIDER);
+            } catch (IllegalArgumentException ignored) {
+                // Provider 不存在则忽略
+            }
+
             List<String> list = locationManager.getAllProviders();
             for (index = 0; index < list.size(); index++) {
                 if (list.get(index).equals(LocationManager.GPS_PROVIDER)) {

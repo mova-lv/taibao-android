@@ -1,11 +1,18 @@
 package com.taibao.app
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.blankj.utilcode.util.FileIOUtils
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ImageUtils
 import com.taibao.app.databinding.FragmentNavMainBinding
 import com.taibao.app.databinding.ItemLocationHistoryBinding
 import com.zcshou.utils.GoUtils
@@ -18,132 +25,175 @@ import tech.jour.template.base.ktx.visible
 import tech.jour.template.base.utils.toast
 import tech.jour.template.common.model.db.LocalLocationBean
 import tech.jour.template.common.ui.BaseFragment
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 
-	override val mViewModel: MainViewModel by viewModels()
+    override val mViewModel: MainViewModel by viewModels()
 
-	private var cardLocation: LocalLocationBean = LocalLocationBean()
+    private var cardLocation: LocalLocationBean = LocalLocationBean()
 
-	override fun initView() {
-		mBinding.apply {
-			fab.clickDelay {
+    private var currentPhotoUri: Uri? = null
+
+    private val takePictureLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && currentPhotoUri != null) {
+            mBinding.fakePhoto.load(currentPhotoUri)
+
+//            val bitmap = ImageUtils.getBitmap(currentPhotoUri!!.path)
+//            if (bitmap != null) {
+//                val bytes = ImageUtils.compressByQuality(bitmap, 1024 * 1024L)
+//                if (bytes != null) {
+//                    val tempfile = createPhotoFile()
+//                    FileIOUtils.writeFileFromBytesByStream(tempfile, bytes)
+//                    val fileSize = FileUtils.getFileLength(tempfile?.path)
+//                    toast("照片已保存 (${fileSize / 1024}KB)")
+//                    mBinding.fakePhoto.load(currentPhotoUri)
+//                }
+//            }
+        }
+    }
+
+    override fun initView() {
+        mBinding.apply {
+            fab.clickDelay {
 //			findNavController().navigate(R.id.mapActivity)
-				findNavController().navigate(R.id.mapFragment)
-			}
-		}
+                findNavController().navigate(R.id.mapFragment)
+            }
+        }
 
-	}
+        mBinding.cameraFab.setOnClickListener {
+            val photoFile = createPhotoFile() ?: return@setOnClickListener
+            val uri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileProvider",
+                photoFile
+            )
+            currentPhotoUri = uri
+            takePictureLauncher.launch(uri)
+        }
+    }
 
-	override fun initObserve() {
-		mViewModel.selectedLocationLivedata.observe(this) {
-			mBinding.apply {
-				cardLocation = it
-				locationDetailTv.text = cardLocation.sematicDescription
-				locationProviceTv.text = cardLocation.address
-				latitudeTv.text = "经纬度:${cardLocation.latitude}·${cardLocation.longitude}"
-			}
-		}
-		mViewModel.isMockServStart.observe(this) {
-			if (it) {
-				toast("模拟位置已启动")
-				mBinding.apply {
-					startMockLocation.text = "停止模拟"
-					startMockLocation.clickDelay {
-						mViewModel.stopWorker()
-					}
-				}
+    private fun createPhotoFile(): File? {
+        val dir = File(requireContext().filesDir, "camera")
+        dir.mkdirs()
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        return File(dir, "IMG_${timestamp}.jpg")
+    }
 
-			} else {
-				mBinding.apply {
-					startMockLocation.text = "启动模拟"
-					startMockLocation.clickDelay {
-						if (!GoUtils.isAllowMockLocation(requireContext())) {
-							GoUtils.showEnableMockLocationDialog(requireContext())
-							return@clickDelay
-						}
-						if (GoUtils.isWifiEnabled(requireContext())) {
-							GoUtils.showDisableWifiDialog(requireContext())
-						}
-						if (!GoUtils.isGpsOpened(requireContext())) {
-							GoUtils.showEnableGpsDialog(requireContext())
-							return@clickDelay
-						}
-						if (mBinding.locationProviceTv.text.isEmpty()) {
-							toast("请选择正确位置")
-							findNavController().navigate(R.id.mapFragment)
-							return@clickDelay
-						}
-						mViewModel.startWorker()
-					}
-				}
-			}
-		}
-	}
+    override fun initObserve() {
+        mViewModel.selectedLocationLivedata.observe(this) {
+            mBinding.apply {
+                cardLocation = it
+                locationDetailTv.text = cardLocation.sematicDescription
+                locationProviceTv.text = cardLocation.address
+                latitudeTv.text = "经纬度:${cardLocation.latitude}·${cardLocation.longitude}"
+            }
+        }
+        mViewModel.isMockServStart.observe(this) {
+            if (it) {
+                toast("模拟位置已启动")
+                mBinding.apply {
+                    startMockLocation.text = "停止模拟"
+                    startMockLocation.clickDelay {
+                        mViewModel.stopWorker()
+                    }
+                }
 
-	override fun initRequestData() {
-		lifecycleScope.launch {
-			mViewModel.getHistoryLocation().collectLatest { localLocationBeans ->
-				val list = localLocationBeans.reversed().filter { it.address.isNotEmpty() }
-				mBinding.apply {
-					if (list.isNotEmpty()) {
-						mViewModel.selectedLocationLivedata.postValue(list.first())
-						recyclerView.adapter = HistoryLocationAdapter(list)
-						emptyView.gone()
-					} else {
-						emptyView.visible()
-					}
-				}
+            } else {
+                mBinding.apply {
+                    startMockLocation.text = "启动模拟"
+                    startMockLocation.clickDelay {
+                        if (!GoUtils.isAllowMockLocation(requireContext())) {
+                            GoUtils.showEnableMockLocationDialog(requireContext())
+                            return@clickDelay
+                        }
+                        if (GoUtils.isWifiEnabled(requireContext())) {
+                            GoUtils.showDisableWifiDialog(requireContext())
+                        }
+                        if (!GoUtils.isGpsOpened(requireContext())) {
+                            GoUtils.showEnableGpsDialog(requireContext())
+                            return@clickDelay
+                        }
+                        if (mBinding.locationProviceTv.text.isEmpty()) {
+                            toast("请选择正确位置")
+                            findNavController().navigate(R.id.mapFragment)
+                            return@clickDelay
+                        }
+                        mViewModel.startWorker()
+                    }
+                }
+            }
+        }
+    }
 
-			}
-		}
-	}
+    override fun initRequestData() {
+        lifecycleScope.launch {
+            mViewModel.getHistoryLocation().collectLatest { localLocationBeans ->
+                val list = localLocationBeans.reversed().filter { it.address.isNotEmpty() }
+                mBinding.apply {
+                    if (list.isNotEmpty()) {
+                        mViewModel.selectedLocationLivedata.postValue(list.first())
+                        recyclerView.adapter = HistoryLocationAdapter(list)
+                        emptyView.gone()
+                    } else {
+                        emptyView.visible()
+                    }
+                }
+
+            }
+        }
+    }
 
 
-	inner class HistoryLocationAdapter(private val data: List<LocalLocationBean>) :
-		RecyclerView.Adapter<HistoryLocationAdapter.ViewHolder>() {
-		override fun onCreateViewHolder(
-			parent: ViewGroup,
-			viewType: Int
-		): ViewHolder {
-			return ViewHolder(
-				ItemLocationHistoryBinding.inflate(
-					LayoutInflater.from(parent.context),
-					parent,
-					false
-				)
-			)
-		}
+    inner class HistoryLocationAdapter(private val data: List<LocalLocationBean>) :
+        RecyclerView.Adapter<HistoryLocationAdapter.ViewHolder>() {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): ViewHolder {
+            return ViewHolder(
+                ItemLocationHistoryBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        }
 
-		override fun onBindViewHolder(
-			holder: ViewHolder,
-			position: Int
-		) {
-			holder.bind(data[position])
-		}
+        override fun onBindViewHolder(
+            holder: ViewHolder,
+            position: Int
+        ) {
+            holder.bind(data[position])
+        }
 
-		override fun getItemCount(): Int {
-			return data.size
-		}
+        override fun getItemCount(): Int {
+            return data.size
+        }
 
-		inner class ViewHolder(private val binding: ItemLocationHistoryBinding) :
-			RecyclerView.ViewHolder(binding.root) {
-			fun bind(bean: LocalLocationBean) {
-				binding.apply {
-					LocationText.text = bean.sematicDescription
-					latLngText.text = bean.address
-					root.clickDelay {
-						mViewModel.selectedLocationLivedata.postValue(bean)
-					}
-					root.setOnLongClickListener {
-						mViewModel.deleteHistory(bean)
-						true
-					}
-				}
-			}
-		}
-	}
+        inner class ViewHolder(private val binding: ItemLocationHistoryBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bind(bean: LocalLocationBean) {
+                binding.apply {
+                    LocationText.text = bean.sematicDescription
+                    latLngText.text = bean.address
+                    root.clickDelay {
+                        mViewModel.selectedLocationLivedata.postValue(bean)
+                    }
+                    root.setOnLongClickListener {
+                        mViewModel.deleteHistory(bean)
+                        true
+                    }
+                }
+            }
+        }
+    }
 
 
 }

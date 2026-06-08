@@ -23,7 +23,6 @@ import com.baidu.mapapi.search.sug.SuggestionResult
 import com.baidu.mapapi.search.sug.SuggestionSearch
 import com.baidu.mapapi.search.sug.SuggestionSearchOption
 
-
 //临时存储我的位置,作为全局缓存使用
 var myLocation = LocationBean()
 
@@ -172,13 +171,13 @@ data class LocationBean(
 	val latitude: Double = 0.0,
 	val longitude: Double = 0.0,
 	val province: String? = "",
-	val city: String = "",
-	val district: String = "",
-	val cityCode: String = "",
-	val adCode: String = "",
+	val city: String? = "",
+	val district: String? = "",
+	val cityCode: String? = "",
+	val adCode: String? = "",
 	val address: Address? = null,
-	val country: String = "",
-	val street: String = "",
+	val country: String? = "",
+	val street: String? = "",
 	val locationDescribe: String? = "",
 	val radius: Float = 0F,
 	val direction: Float = 0F,

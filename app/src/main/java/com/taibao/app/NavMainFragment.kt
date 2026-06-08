@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,10 +34,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 
-    override val mViewModel: MainViewModel by viewModels()
-
-    private var cardLocation: LocalLocationBean = LocalLocationBean()
-
+    override val mViewModel: MainViewModel by activityViewModels()
     private var currentPhotoUri: Uri? = null
 
     private val takePictureLauncher = registerForActivityResult(
@@ -61,9 +59,9 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 
     override fun initView() {
         mBinding.apply {
-            fab.clickDelay {
+            navMapBtn.clickDelay {
 //			findNavController().navigate(R.id.mapActivity)
-                findNavController().navigate(R.id.mapFragment)
+                findNavController().navigate(R.id.navMapFragment)
             }
         }
 
@@ -87,113 +85,45 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     }
 
     override fun initObserve() {
-        mViewModel.selectedLocationLivedata.observe(this) {
-            mBinding.apply {
-                cardLocation = it
-                locationDetailTv.text = cardLocation.sematicDescription
-                locationProviceTv.text = cardLocation.address
-                latitudeTv.text = "经纬度: ${cardLocation.latitude}  ·  ${cardLocation.longitude}"
-            }
-        }
         mViewModel.isMockServStart.observe(this) {
             if (it) {
                 toast("模拟位置已启动")
                 mBinding.apply {
-                    startMockLocation.text = "停止模拟"
-                    startMockLocation.clickDelay {
-                        mViewModel.stopWorker()
-                    }
+//                    startMockLocation.text = "停止模拟"
+//                    startMockLocation.clickDelay {
+//                        mViewModel.stopWorker()
+//                    }
                 }
 
             } else {
                 mBinding.apply {
-                    startMockLocation.text = "启动模拟"
-                    startMockLocation.clickDelay {
-                        if (!GoUtils.isAllowMockLocation(requireContext())) {
-                            GoUtils.showEnableMockLocationDialog(requireContext())
-                            return@clickDelay
-                        }
-                        if (GoUtils.isWifiEnabled(requireContext())) {
-                            GoUtils.showDisableWifiDialog(requireContext())
-                        }
-                        if (!GoUtils.isGpsOpened(requireContext())) {
-                            GoUtils.showEnableGpsDialog(requireContext())
-                            return@clickDelay
-                        }
-                        if (mBinding.locationProviceTv.text.isEmpty()) {
-                            toast("请选择正确位置")
-                            findNavController().navigate(R.id.mapFragment)
-                            return@clickDelay
-                        }
-                        mViewModel.startWorker()
-                    }
+//                    startMockLocation.text = "启动模拟"
+//                    startMockLocation.clickDelay {
+//                        if (!GoUtils.isAllowMockLocation(requireContext())) {
+//                            GoUtils.showEnableMockLocationDialog(requireContext())
+//                            return@clickDelay
+//                        }
+//                        if (GoUtils.isWifiEnabled(requireContext())) {
+//                            GoUtils.showDisableWifiDialog(requireContext())
+//                        }
+//                        if (!GoUtils.isGpsOpened(requireContext())) {
+//                            GoUtils.showEnableGpsDialog(requireContext())
+//                            return@clickDelay
+//                        }
+//                        if (mBinding.locationProviceTv.text.isEmpty()) {
+//                            toast("请选择正确位置")
+//                            findNavController().navigate(R.id.mapFragment)
+//                            return@clickDelay
+//                        }
+//                        mViewModel.startWorker()
+//                    }
                 }
             }
         }
+
     }
 
     override fun initRequestData() {
-        lifecycleScope.launch {
-            mViewModel.getHistoryLocation().collectLatest { localLocationBeans ->
-                val list = localLocationBeans.reversed().filter { it.address.isNotEmpty() }
-                mBinding.apply {
-                    if (list.isNotEmpty()) {
-                        mViewModel.selectedLocationLivedata.postValue(list.first())
-                        recyclerView.adapter = HistoryLocationAdapter(list)
-                        emptyView.gone()
-                    } else {
-                        emptyView.visible()
-                    }
-                }
-
-            }
-        }
     }
-
-
-    inner class HistoryLocationAdapter(private val data: List<LocalLocationBean>) :
-        RecyclerView.Adapter<HistoryLocationAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
-        ): ViewHolder {
-            return ViewHolder(
-                ItemLocationHistoryBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-        }
-
-        override fun onBindViewHolder(
-            holder: ViewHolder,
-            position: Int
-        ) {
-            holder.bind(data[position])
-        }
-
-        override fun getItemCount(): Int {
-            return data.size
-        }
-
-        inner class ViewHolder(private val binding: ItemLocationHistoryBinding) :
-            RecyclerView.ViewHolder(binding.root) {
-            fun bind(bean: LocalLocationBean) {
-                binding.apply {
-                    LocationText.text = bean.sematicDescription
-                    latLngText.text = bean.address
-                    root.clickDelay {
-                        mViewModel.selectedLocationLivedata.postValue(bean)
-                    }
-                    root.setOnLongClickListener {
-                        mViewModel.deleteHistory(bean)
-                        true
-                    }
-                }
-            }
-        }
-    }
-
 
 }

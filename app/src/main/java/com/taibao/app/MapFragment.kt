@@ -202,8 +202,6 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>() {
 	}
 
 	inner class PopSearchLocation(context: Context) : BottomPopupView(context) {
-
-
 		override fun getImplLayoutId(): Int {
 			return R.layout.pop_map_search
 		}

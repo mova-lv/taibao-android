@@ -16,49 +16,54 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import tech.jour.template.base.mvvm.vm.BaseViewModel
 import tech.jour.template.common.model.db.LocalLocationBean
 import javax.inject.Inject
+
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mRepository: MapRepository) : BaseViewModel() {
-	val selectedLocationLivedata = MutableLiveData<LocalLocationBean>()
-	val isMockServStart = MutableLiveData(false)
-	private val workManager = WorkManager.getInstance()
+    val selectedLocationLivedata = MutableLiveData<LocalLocationBean>()
+    val isMockServStart = MutableLiveData(false)
+    private val workManager = WorkManager.getInstance()
 
-	val fakeImagePath = MutableLiveData("")
+    val fakeImagePath = MutableLiveData("")
 
-	fun startWorker() {
-		isMockServStart.postValue(true)
-		val blurRequest = OneTimeWorkRequestBuilder<MockLocationWorker>()
-			.setInputData(createInputData())
-			.build()
-		workManager.enqueueUniqueWork(
-			UNIQUE_WORK_NAME,
-			ExistingWorkPolicy.REPLACE,
-			blurRequest
-		)
-	}
+    /**
+     * 从 selectedLocationLivedata 取值启动模拟定位
+     */
+    fun startWorker() {
+        val bean = selectedLocationLivedata.value ?: return
+        val latLng = MapUtils.bd2wgs(bean.longitude, bean.latitude)
+        startWorker(
+            longitude = latLng[0],
+            latitude = latLng[1],
+            sematicDescription = bean.sematicDescription
+        )
+    }
 
-	fun stopWorker() {
-		isMockServStart.postValue(false)
-		workManager.cancelUniqueWork(UNIQUE_WORK_NAME)
-	}
+    /**
+     * 直接传入坐标和描述启动模拟定位
+     */
+    fun startWorker(longitude: Double, latitude: Double, sematicDescription: String) {
+        isMockServStart.postValue(true)
+        val data = Data.Builder()
+            .putString(KEY_LONGITUDE, longitude.toString())
+            .putString(KEY_LATITUDE, latitude.toString())
+            .putString(KEY_SEMATICDESCRIPTION, sematicDescription)
+            .build()
+        val request = OneTimeWorkRequestBuilder<MockLocationWorker>()
+            .setInputData(data)
+            .build()
+        workManager.enqueueUniqueWork(
+            UNIQUE_WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            request
+        )
+    }
 
-	private fun createInputData(): Data {
-		val builder = Data.Builder()
-		val bean = selectedLocationLivedata.value
-		if (bean != null) {
-			val latLng = MapUtils.bd2wgs(
-				bean.longitude,
-				bean.latitude
-			)
-			builder.putString(KEY_LONGITUDE, latLng[0].toString())
-			builder.putString(KEY_LATITUDE, latLng[1].toString())
-			builder.putString(KEY_SEMATICDESCRIPTION, bean.sematicDescription)
-		}
-		return builder.build()
-	}
+    fun stopWorker() {
+        isMockServStart.postValue(false)
+        workManager.cancelUniqueWork(UNIQUE_WORK_NAME)
+    }
 
-	fun getHistoryLocation() = mRepository.getAll()
+    fun getHistoryLocation() = mRepository.getAll()
 
-	fun deleteHistory(bean: LocalLocationBean) = mRepository.delete(bean)
-
-
+    fun deleteHistory(bean: LocalLocationBean) = mRepository.delete(bean)
 }

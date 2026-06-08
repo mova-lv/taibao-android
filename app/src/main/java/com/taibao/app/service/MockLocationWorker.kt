@@ -69,6 +69,7 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
                 mockLocation()
                 Result.success()
             } catch (exception: Exception) {
+                exception.printStackTrace()
                 Result.failure()
             }
         }

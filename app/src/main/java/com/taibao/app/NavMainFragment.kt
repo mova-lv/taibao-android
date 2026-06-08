@@ -29,7 +29,6 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     private val takePictureLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
-        // content://com.taibao.app.fileProvider/files/camera/IMG_20260608_170319.jpg
         currentPhotoUri.d()
         if (success && currentPhotoUri != null) {
             picUriCallback(currentPhotoUri!!)
@@ -61,6 +60,25 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             galleryBtn.clickDelay {
                 pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
+
+            switchWidget.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    val latStr = latitudeEt.text.toString()
+                    val lngStr = longitudeEt.text.toString()
+                    if (latStr.isEmpty() || lngStr.isEmpty()) {
+                        toast("请先选择目标位置")
+                        switchWidget.isChecked = false
+                        return@setOnCheckedChangeListener
+                    }
+                    mViewModel.startWorker(
+                        longitude = lngStr.toDouble(),
+                        latitude = latStr.toDouble(),
+                        sematicDescription = ""
+                    )
+                } else {
+                    mViewModel.stopWorker()
+                }
+            }
         }
     }
 
@@ -80,39 +98,11 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
         mViewModel.isMockServStart.observe(this) {
             if (it) {
                 toast("模拟位置启动")
-                mBinding.apply {
-//                    startMockLocation.text = "停止模拟"
-//                    startMockLocation.clickDelay {
-//                        mViewModel.stopWorker()
-//                    }
-                }
-
+                mBinding.switchWidget.isChecked = true
             } else {
-                mBinding.apply {
-//                    startMockLocation.text = "启动模拟"
-//                    startMockLocation.clickDelay {
-//                        if (!GoUtils.isAllowMockLocation(requireContext())) {
-//                            GoUtils.showEnableMockLocationDialog(requireContext())
-//                            return@clickDelay
-//                        }
-//                        if (GoUtils.isWifiEnabled(requireContext())) {
-//                            GoUtils.showDisableWifiDialog(requireContext())
-//                        }
-//                        if (!GoUtils.isGpsOpened(requireContext())) {
-//                            GoUtils.showEnableGpsDialog(requireContext())
-//                            return@clickDelay
-//                        }
-//                        if (mBinding.locationProviceTv.text.isEmpty()) {
-//                            toast("请选择正确位置")
-//                            findNavController().navigate(R.id.mapFragment)
-//                            return@clickDelay
-//                        }
-//                        mViewModel.startWorker()
-//                    }
-                }
+                mBinding.switchWidget.isChecked = false
             }
         }
-
     }
 
     override fun initRequestData() {
@@ -138,6 +128,4 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             }
         }
     }
-
-
 }

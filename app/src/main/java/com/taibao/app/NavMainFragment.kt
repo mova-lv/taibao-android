@@ -3,6 +3,7 @@ package com.taibao.app
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import tech.jour.template.base.ktx.clickDelay
+import tech.jour.template.base.ktx.d
 import tech.jour.template.base.ktx.gone
 import tech.jour.template.base.ktx.visible
 import tech.jour.template.base.utils.toast
@@ -40,8 +42,10 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     private val takePictureLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
+        success.d()
+        currentPhotoUri.d()
         if (success && currentPhotoUri != null) {
-            mBinding.fakePhoto.load(currentPhotoUri)
+//            mBinding.fakePhoto.load(currentPhotoUri)
 
 //            val bitmap = ImageUtils.getBitmap(currentPhotoUri!!.path)
 //            if (bitmap != null) {
@@ -51,9 +55,17 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 //                    FileIOUtils.writeFileFromBytesByStream(tempfile, bytes)
 //                    val fileSize = FileUtils.getFileLength(tempfile?.path)
 //                    toast("照片已保存 (${fileSize / 1024}KB)")
-//                    mBinding.fakePhoto.load(currentPhotoUri)
+//                    mBinding.fakePhoto.load(tempfile)
 //                }
 //            }
+        }
+    }
+
+    val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri.d()
+        if (uri != null) {
+            mBinding.fakePhoto.load(uri)
+        } else {
         }
     }
 
@@ -63,17 +75,20 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 //			findNavController().navigate(R.id.mapActivity)
                 findNavController().navigate(R.id.navMapFragment)
             }
-        }
+            cameraFab.setOnClickListener {
+                val photoFile = createPhotoFile() ?: return@setOnClickListener
+                val uri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "${requireContext().packageName}.fileProvider",
+                    photoFile
+                )
+                currentPhotoUri = uri
+                takePictureLauncher.launch(uri)
+            }
 
-        mBinding.cameraFab.setOnClickListener {
-            val photoFile = createPhotoFile() ?: return@setOnClickListener
-            val uri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.fileProvider",
-                photoFile
-            )
-            currentPhotoUri = uri
-            takePictureLauncher.launch(uri)
+            galleryBtn.clickDelay {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
         }
     }
 

@@ -9,8 +9,8 @@ import com.baidu.mapapi.search.geocode.GeoCoder
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult
-import com.zcshou.utils.LocationBean
-import com.zcshou.utils.myLocation
+import com.taibao.app.utils.LocationBean
+import com.taibao.app.utils.myLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import tech.jour.template.base.mvvm.vm.BaseViewModel

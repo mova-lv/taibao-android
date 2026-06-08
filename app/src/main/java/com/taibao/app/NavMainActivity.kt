@@ -10,12 +10,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.taibao.app.databinding.ActivityMainNavBinding
-import com.zcshou.utils.GoUtils
-import com.zcshou.utils.requestLocation
+import com.taibao.app.utils.GoUtils
+import com.taibao.app.utils.requestLocation
 import dagger.hilt.android.AndroidEntryPoint
 import tech.jour.template.base.ktx.d
 import tech.jour.template.base.mvvm.vm.EmptyViewModel
-import tech.jour.template.base.utils.toast
 import tech.jour.template.common.ui.BaseActivity
 
 @AndroidEntryPoint

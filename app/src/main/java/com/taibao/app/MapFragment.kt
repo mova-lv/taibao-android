@@ -28,9 +28,9 @@ import com.taibao.app.databinding.FragmentMapBinding
 import com.taibao.app.databinding.ItemLocationHistorySearchBinding
 import com.taibao.app.databinding.PopMapSearchBinding
 import com.taibao.app.databinding.PopMapTypeBinding
-import com.zcshou.utils.myLocation
-import com.zcshou.utils.requestLocation
-import com.zcshou.utils.sugSearch
+import com.taibao.app.utils.myLocation
+import com.taibao.app.utils.requestLocation
+import com.taibao.app.utils.sugSearch
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

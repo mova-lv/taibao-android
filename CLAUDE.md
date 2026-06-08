@@ -41,8 +41,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 com.taibao.app              # App-specific: Activities, Fragments, ViewModels, Repository
-com.zcshou.utils            # Baidu Maps utilities, coordinate conversion, LocationBean
-com.zcshou.service          # MockLocationWorker (foreground mock location service)
+com.taibao.app.utils            # Baidu Maps utilities, coordinate conversion, LocationBean
+com.taibao.app.service          # MockLocationWorker (foreground mock location service)
 tech.jour.template.base     # Generic base framework: BaseApplication, BaseViewModel, utils, KTX extensions
 tech.jour.template.common   # Shared app layer: BaseActivity/Fragment, Room DB, navigation, constants
 tech.jour.template.module   # Template module (DActivity/DFragment/DViewModel — mostly unused scaffolding)

@@ -1,32 +1,17 @@
 package com.taibao.app
 
 import android.net.Uri
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.ImageUtils
 import com.taibao.app.databinding.FragmentNavMainBinding
-import com.taibao.app.databinding.ItemLocationHistoryBinding
-import com.zcshou.utils.GoUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import tech.jour.template.base.ktx.clickDelay
 import tech.jour.template.base.ktx.d
-import tech.jour.template.base.ktx.gone
-import tech.jour.template.base.ktx.visible
 import tech.jour.template.base.utils.toast
-import tech.jour.template.common.model.db.LocalLocationBean
 import tech.jour.template.common.ui.BaseFragment
 import java.io.File
 import java.text.SimpleDateFormat
@@ -42,7 +27,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     private val takePictureLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
-        success.d()
+        // content://com.taibao.app.fileProvider/files/camera/IMG_20260608_170319.jpg
         currentPhotoUri.d()
         if (success && currentPhotoUri != null) {
 //            mBinding.fakePhoto.load(currentPhotoUri)
@@ -62,17 +47,19 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     }
 
     val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        uri.d()
         if (uri != null) {
-            mBinding.fakePhoto.load(uri)
-        } else {
+            val localPath = FakeCameraManager.setFakeImageFromUri(requireContext(), uri)
+            if (localPath != null) {
+                mViewModel.fakeImagePath.postValue(localPath)
+            } else {
+                toast("图片读取失败")
+            }
         }
     }
 
     override fun initView() {
         mBinding.apply {
             navMapBtn.clickDelay {
-//			findNavController().navigate(R.id.mapActivity)
                 findNavController().navigate(R.id.navMapFragment)
             }
             cameraFab.setOnClickListener {
@@ -105,6 +92,9 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 latitudeEt.setText(it.latitude.toString())
                 longitudeEt.setText(it.longitude.toString())
             }
+        }
+        mViewModel.fakeImagePath.observe(this) {
+            mBinding.fakePhoto.load(it)
         }
         mViewModel.isMockServStart.observe(this) {
             if (it) {
@@ -145,6 +135,10 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     }
 
     override fun initRequestData() {
+        updateFakeImagePath()
     }
 
+    private fun updateFakeImagePath() {
+        mViewModel.fakeImagePath.postValue(FakeCameraManager.getFakeImageFile(requireContext())?.absolutePath)
+    }
 }

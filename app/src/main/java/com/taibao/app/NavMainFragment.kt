@@ -13,6 +13,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import tech.jour.template.base.ktx.clickDelay
 import tech.jour.template.base.ktx.d
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import tech.jour.template.base.utils.toast
 import tech.jour.template.common.ui.BaseFragment
 import java.io.File
@@ -25,6 +27,12 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 
     override val mViewModel: MainViewModel by activityViewModels()
     private var currentPhotoUri: Uri? = null
+
+    companion object {
+        private const val KEY_CACHED_LAT = "KEY_CACHED_LAT"
+        private const val KEY_CACHED_LNG = "KEY_CACHED_LNG"
+        private const val KEY_CACHED_DESC = "KEY_CACHED_DESC"
+    }
 
     private val takePictureLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
@@ -61,6 +69,12 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
 
+            // 恢复上次缓存的输入值
+            val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            prefs.getString(KEY_CACHED_LAT, "")?.let { if (it.isNotEmpty()) latitudeEt.setText(it) }
+            prefs.getString(KEY_CACHED_LNG, "")?.let { if (it.isNotEmpty()) longitudeEt.setText(it) }
+            prefs.getString(KEY_CACHED_DESC, "")?.let { if (it.isNotEmpty()) sematicDescriptionEt.setText(it) }
+
             switchWidget.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     val latStr = latitudeEt.text.toString()
@@ -70,6 +84,13 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                         toast("请先选择目标位置")
                         switchWidget.isChecked = false
                         return@setOnCheckedChangeListener
+                    }
+                    // 缓存输入值
+                    val savePrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    savePrefs.edit {
+                        putString(KEY_CACHED_LAT, latitudeEt.text.toString())
+                        putString(KEY_CACHED_LNG, longitudeEt.text.toString())
+                        putString(KEY_CACHED_DESC, sematicDescriptionEt.text.toString())
                     }
                     mViewModel.startWorker(
                         longitude = lngStr.toDouble(),

@@ -76,7 +76,7 @@
                 android:id="@+id/startMockLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="启动模拟"
+                android:text="使用此位置"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

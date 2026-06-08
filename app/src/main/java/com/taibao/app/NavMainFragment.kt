@@ -85,6 +85,12 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     }
 
     override fun initObserve() {
+        mViewModel.selectedLocationLivedata.observe(this) {
+            mBinding.apply {
+                latitudeEt.setText(it.latitude.toString())
+                longitudeEt.setText(it.longitude.toString())
+            }
+        }
         mViewModel.isMockServStart.observe(this) {
             if (it) {
                 toast("模拟位置已启动")

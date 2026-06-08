@@ -25,6 +25,7 @@ androidLogger = "v2.2.1"
 customactivityoncrash = "2.4.0"
 shapeview = "9.2"
 utilcodex = "1.31.1"
+exifinterface = "1.3.6"
 
 [libraries]
 android-logger = { module = "com.github.journe:Android-logger", version.ref = "androidLogger" }
@@ -54,6 +55,7 @@ shapeview = { module = "com.github.getActivity:ShapeView", version.ref = "shapev
 utilcodex = { module = "com.blankj:utilcodex", version.ref = "utilcodex" }
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
 xpopup = { module = "com.github.li-xiaojun:XPopup", version.ref = "xpopup" }
+androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

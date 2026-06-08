@@ -5,10 +5,12 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.taibao.app.databinding.FragmentNavMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import tech.jour.template.base.ktx.clickDelay
 import tech.jour.template.base.ktx.d
 import tech.jour.template.base.utils.toast
@@ -30,8 +32,8 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
         // content://com.taibao.app.fileProvider/files/camera/IMG_20260608_170319.jpg
         currentPhotoUri.d()
         if (success && currentPhotoUri != null) {
+            picUriCallback(currentPhotoUri!!)
 //            mBinding.fakePhoto.load(currentPhotoUri)
-
 //            val bitmap = ImageUtils.getBitmap(currentPhotoUri!!.path)
 //            if (bitmap != null) {
 //                val bytes = ImageUtils.compressByQuality(bitmap, 1024 * 1024L)
@@ -48,12 +50,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
 
     val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-            val localPath = FakeCameraManager.setFakeImageFromUri(requireContext(), uri)
-            if (localPath != null) {
-                mViewModel.fakeImagePath.postValue(localPath)
-            } else {
-                toast("图片读取失败")
-            }
+            picUriCallback(uri)
         }
     }
 
@@ -79,13 +76,6 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
         }
     }
 
-    private fun createPhotoFile(): File? {
-        val dir = File(requireContext().filesDir, "camera")
-        dir.mkdirs()
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        return File(dir, "IMG_${timestamp}.jpg")
-    }
-
     override fun initObserve() {
         mViewModel.selectedLocationLivedata.observe(this) {
             mBinding.apply {
@@ -94,11 +84,14 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             }
         }
         mViewModel.fakeImagePath.observe(this) {
-            mBinding.fakePhoto.load(it)
+            if (it.isEmpty()) {
+                mBinding.fakePhoto.load(R.drawable.img_empty_holder)
+            } else
+                mBinding.fakePhoto.load(it)
         }
         mViewModel.isMockServStart.observe(this) {
             if (it) {
-                toast("模拟位置已启动")
+                toast("模拟位置启动")
                 mBinding.apply {
 //                    startMockLocation.text = "停止模拟"
 //                    startMockLocation.clickDelay {
@@ -141,4 +134,22 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
     private fun updateFakeImagePath() {
         mViewModel.fakeImagePath.postValue(FakeCameraManager.getFakeImageFile(requireContext())?.absolutePath)
     }
+
+    private fun createPhotoFile(): File? {
+        val dir = File(requireContext().filesDir, "camera")
+        dir.mkdirs()
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        return File(dir, "IMG_${timestamp}.jpg")
+    }
+
+    private fun picUriCallback(uri: Uri) {
+        lifecycleScope.launch {
+            val localPath = FakeCameraManager.setFakeImageFromUri(requireContext(), uri)
+            if (localPath != null) {
+                mViewModel.fakeImagePath.postValue(localPath)
+            }
+        }
+    }
+
+
 }

@@ -83,20 +83,21 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/fakeCard"
+        style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cameraFab">
 
         <ImageView
             android:id="@+id/fakePhoto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cameraFab"
+            android:scaleType="fitCenter"
             tools:src="@tools:sample/avatars" />
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -92,7 +92,7 @@ dependencies {
 	implementation(libs.customactivityoncrash)
 	implementation(libs.android.logger)
 
-	implementation("com.tencent:mmkv:2.2.2")
+	implementation("com.tencent:mmkv:2.4.0")
 //	debugImplementation("com.guolindev.glance:glance:1.1.0")
 
 	implementation(libs.permissionx)
@@ -102,10 +102,10 @@ dependencies {
 //	implementation("io.github.jeremyliao:live-event-bus-x:1.8.0")
 	implementation(libs.xpopup)
 
-	implementation("com.baidu.lbsyun:BaiduMapSDK_Map:7.6.2")
-	implementation("com.baidu.lbsyun:BaiduMapSDK_Util:7.6.2")
-	implementation("com.baidu.lbsyun:BaiduMapSDK_Search:7.6.2")
-	implementation("com.baidu.lbsyun:BaiduMapSDK_Location:9.6.4")
+	implementation("com.baidu.lbsyun:BaiduMapSDK_Map:8.1.0")
+	implementation("com.baidu.lbsyun:BaiduMapSDK_Util:8.1.0")
+	implementation("com.baidu.lbsyun:BaiduMapSDK_Search:8.1.0")
+	implementation("com.baidu.lbsyun:BaiduMapSDK_Location:9.6.8")
 }
 kapt {
 	correctErrorTypes = true

@@ -102,18 +102,6 @@ fun poiSearchBus(city: String, address: String, callback: (PoiResult?) -> Unit) 
 	}
 }
 
-fun searchBusLine(city: String, busLineId: String, callback: (BusLineResult?) -> Unit) {
-	BusLineSearch.newInstance().apply {
-		setOnGetBusLineSearchResultListener {
-			callback(it)
-		}
-		searchBusLine(
-			BusLineSearchOption()
-				.city(city)
-				.uid(busLineId)
-		)
-	}
-}
 
 fun poiSearchNearBy(
 	lat: LatLng,

@@ -92,7 +92,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 cardLocation = it
                 locationDetailTv.text = cardLocation.sematicDescription
                 locationProviceTv.text = cardLocation.address
-                latitudeTv.text = "经纬度:${cardLocation.latitude}·${cardLocation.longitude}"
+                latitudeTv.text = "经纬度: ${cardLocation.latitude}  ·  ${cardLocation.longitude}"
             }
         }
         mViewModel.isMockServStart.observe(this) {

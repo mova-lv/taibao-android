@@ -64,12 +64,13 @@
                 android:id="@+id/latitudeTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="None"
                 android:textSize="10sp"
-                android:visibility="gone"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/startMockLocation"
                 app:layout_constraintEnd_toEndOf="@+id/locationProviceTv"
                 app:layout_constraintStart_toStartOf="@+id/locationProviceTv"
-                app:layout_constraintTop_toBottomOf="@+id/locationProviceTv" />
+                app:layout_constraintTop_toBottomOf="@+id/locationProviceTv"
+                tools:text="latitude=31.190113, longitude=120.603548" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/startMockLocation"

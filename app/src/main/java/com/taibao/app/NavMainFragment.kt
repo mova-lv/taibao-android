@@ -65,6 +65,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 if (isChecked) {
                     val latStr = latitudeEt.text.toString()
                     val lngStr = longitudeEt.text.toString()
+                    val sematicStr = sematicDescriptionEt.text.toString()
                     if (latStr.isEmpty() || lngStr.isEmpty()) {
                         toast("请先选择目标位置")
                         switchWidget.isChecked = false
@@ -73,7 +74,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                     mViewModel.startWorker(
                         longitude = lngStr.toDouble(),
                         latitude = latStr.toDouble(),
-                        sematicDescription = ""
+                        sematicDescription = sematicStr
                     )
                 } else {
                     mViewModel.stopWorker()
@@ -87,6 +88,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             mBinding.apply {
                 latitudeEt.setText(it.latitude.toString())
                 longitudeEt.setText(it.longitude.toString())
+                sematicDescriptionEt.setText(it.sematicDescription.toString())
             }
         }
         mViewModel.fakeImagePath.observe(this) {

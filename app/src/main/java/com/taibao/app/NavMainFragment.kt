@@ -33,18 +33,6 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
         currentPhotoUri.d()
         if (success && currentPhotoUri != null) {
             picUriCallback(currentPhotoUri!!)
-//            mBinding.fakePhoto.load(currentPhotoUri)
-//            val bitmap = ImageUtils.getBitmap(currentPhotoUri!!.path)
-//            if (bitmap != null) {
-//                val bytes = ImageUtils.compressByQuality(bitmap, 1024 * 1024L)
-//                if (bytes != null) {
-//                    val tempfile = createPhotoFile()
-//                    FileIOUtils.writeFileFromBytesByStream(tempfile, bytes)
-//                    val fileSize = FileUtils.getFileLength(tempfile?.path)
-//                    toast("照片已保存 (${fileSize / 1024}KB)")
-//                    mBinding.fakePhoto.load(tempfile)
-//                }
-//            }
         }
     }
 

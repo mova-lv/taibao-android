@@ -57,6 +57,7 @@
         android:id="@+id/switchWidget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="模拟开关"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
@@ -68,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="点击拍照"
-        app:layout_constraintStart_toStartOf="@+id/switchWidget"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
         app:layout_constraintTop_toBottomOf="@+id/switchWidget" />
 
     <Button

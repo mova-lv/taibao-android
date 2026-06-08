@@ -1,4 +1,4 @@
-package com.taibao.app
+package com.taibao.app.map
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -24,6 +24,7 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.AttachPopupView
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.enums.PopupPosition
+import com.taibao.app.R
 import com.taibao.app.databinding.FragmentMapBinding
 import com.taibao.app.databinding.ItemLocationHistorySearchBinding
 import com.taibao.app.databinding.PopMapSearchBinding

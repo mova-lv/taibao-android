@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_nav_main" />
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.taibao.app.MapFragment"
+        android:name="com.taibao.app.map.MapFragment"
         android:label="选择位置"
         tools:layout="@layout/fragment_map" />
     <fragment

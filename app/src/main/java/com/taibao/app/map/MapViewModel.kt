@@ -1,4 +1,4 @@
-package com.taibao.app
+package com.taibao.app.map
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope

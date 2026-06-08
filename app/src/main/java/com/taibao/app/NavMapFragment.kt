@@ -19,11 +19,8 @@ import tech.jour.template.common.ui.BaseFragment
 
 @AndroidEntryPoint
 class NavMapFragment : BaseFragment<FragmentNavMapBinding, MainViewModel>() {
-
     override val mViewModel: MainViewModel by activityViewModels()
-
     private var cardLocation: LocalLocationBean = LocalLocationBean()
-
 
     override fun initView() {
         mBinding.apply {

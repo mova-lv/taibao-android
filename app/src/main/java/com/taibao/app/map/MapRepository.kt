@@ -1,4 +1,4 @@
-package com.taibao.app
+package com.taibao.app.map
 
 import tech.jour.template.common.model.db.LocalLocationBean
 import tech.jour.template.common.room.AppDatabase

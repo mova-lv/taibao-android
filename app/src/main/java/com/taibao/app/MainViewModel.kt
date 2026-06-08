@@ -5,6 +5,7 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.taibao.app.map.MapRepository
 import com.taibao.app.service.MockLocationWorker
 import com.taibao.app.service.MockLocationWorker.Companion.KEY_LATITUDE
 import com.taibao.app.service.MockLocationWorker.Companion.KEY_LONGITUDE
@@ -15,8 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import tech.jour.template.base.mvvm.vm.BaseViewModel
 import tech.jour.template.common.model.db.LocalLocationBean
 import javax.inject.Inject
-
-
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mRepository: MapRepository) : BaseViewModel() {
 	val selectedLocationLivedata = MutableLiveData<LocalLocationBean>()

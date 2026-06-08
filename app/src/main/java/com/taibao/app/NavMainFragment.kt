@@ -110,6 +110,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 latitudeEt.setText(it.latitude.toString())
                 longitudeEt.setText(it.longitude.toString())
                 sematicDescriptionEt.setText(it.sematicDescription.toString())
+                mBinding.switchWidget.isChecked = false
             }
         }
         mViewModel.fakeImagePath.observe(this) {

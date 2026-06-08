@@ -1,9 +1,11 @@
 package com.taibao.app
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.taibao.app.map.MapRepository
 import com.taibao.app.service.MockLocationWorker
@@ -13,6 +15,7 @@ import com.taibao.app.service.MockLocationWorker.Companion.KEY_SEMATICDESCRIPTIO
 import com.taibao.app.service.MockLocationWorker.Companion.UNIQUE_WORK_NAME
 import com.taibao.app.utils.MapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import tech.jour.template.base.mvvm.vm.BaseViewModel
 import tech.jour.template.common.model.db.LocalLocationBean
 import javax.inject.Inject
@@ -25,9 +28,20 @@ class MainViewModel @Inject constructor(private val mRepository: MapRepository) 
 
     val fakeImagePath = MutableLiveData("")
 
-    /**
-     * 从 selectedLocationLivedata 取值启动模拟定位
-     */
+    init {
+        syncWorkerStatus()
+    }
+
+    private fun syncWorkerStatus() {
+        viewModelScope.launch {
+            val workInfos = workManager.getWorkInfosForUniqueWork(UNIQUE_WORK_NAME).get()
+            val isRunning = workInfos.any { info ->
+                info.state == WorkInfo.State.RUNNING || info.state == WorkInfo.State.ENQUEUED
+            }
+            isMockServStart.postValue(isRunning)
+        }
+    }
+
     fun startWorker() {
         val bean = selectedLocationLivedata.value ?: return
         val latLng = MapUtils.bd2wgs(bean.longitude, bean.latitude)
@@ -38,9 +52,6 @@ class MainViewModel @Inject constructor(private val mRepository: MapRepository) 
         )
     }
 
-    /**
-     * 直接传入坐标和描述启动模拟定位
-     */
     fun startWorker(longitude: Double, latitude: Double, sematicDescription: String) {
         isMockServStart.postValue(true)
         val data = Data.Builder()

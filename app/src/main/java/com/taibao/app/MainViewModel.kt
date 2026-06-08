@@ -15,6 +15,7 @@ import com.taibao.app.service.MockLocationWorker.Companion.KEY_SEMATICDESCRIPTIO
 import com.taibao.app.service.MockLocationWorker.Companion.UNIQUE_WORK_NAME
 import com.taibao.app.utils.MapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import tech.jour.template.base.mvvm.vm.BaseViewModel
 import tech.jour.template.common.model.db.LocalLocationBean
@@ -77,4 +78,18 @@ class MainViewModel @Inject constructor(private val mRepository: MapRepository) 
     fun getHistoryLocation() = mRepository.getAll()
 
     fun deleteHistory(bean: LocalLocationBean) = mRepository.delete(bean)
+
+    fun insertHistory(bean: LocalLocationBean) {
+        viewModelScope.launch {
+            // 去重：latitude + longitude + sematicDescription 都相同则跳过
+            val exists = mRepository.getAll().first().any { existing ->
+                existing.latitude == bean.latitude &&
+                        existing.longitude == bean.longitude &&
+                        existing.sematicDescription == bean.sematicDescription
+            }
+            if (!exists) {
+                mRepository.insert(bean)
+            }
+        }
+    }
 }

@@ -4,18 +4,19 @@ import android.net.Uri
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import coil.load
 import com.taibao.app.databinding.FragmentNavMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import tech.jour.template.base.ktx.clickDelay
 import tech.jour.template.base.ktx.d
-import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import tech.jour.template.base.utils.toast
+import tech.jour.template.common.model.db.LocalLocationBean
 import tech.jour.template.common.ui.BaseFragment
 import java.io.File
 import java.text.SimpleDateFormat
@@ -72,34 +73,48 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             // 恢复上次缓存的输入值
             val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
             prefs.getString(KEY_CACHED_LAT, "")?.let { if (it.isNotEmpty()) latitudeEt.setText(it) }
-            prefs.getString(KEY_CACHED_LNG, "")?.let { if (it.isNotEmpty()) longitudeEt.setText(it) }
-            prefs.getString(KEY_CACHED_DESC, "")?.let { if (it.isNotEmpty()) sematicDescriptionEt.setText(it) }
+            prefs.getString(KEY_CACHED_LNG, "")
+                ?.let { if (it.isNotEmpty()) longitudeEt.setText(it) }
+            prefs.getString(KEY_CACHED_DESC, "")
+                ?.let { if (it.isNotEmpty()) sematicDescriptionEt.setText(it) }
 
-            switchWidget.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    val latStr = latitudeEt.text.toString()
-                    val lngStr = longitudeEt.text.toString()
-                    val sematicStr = sematicDescriptionEt.text.toString()
-                    if (latStr.isEmpty() || lngStr.isEmpty()) {
-                        toast("请先选择目标位置")
-                        switchWidget.isChecked = false
-                        return@setOnCheckedChangeListener
-                    }
-                    // 缓存输入值
+            // 用 setOnClickListener 替代 setOnCheckedChangeListener，避免程序化设置触发业务逻辑
+            switchWidget.setOnClickListener {
+                if (!switchWidget.isChecked) {
+                    mViewModel.stopWorker()
+                    return@setOnClickListener
+                }
+
+                val latStr = latitudeEt.text.toString()
+                val lngStr = longitudeEt.text.toString()
+                val sematicStr = sematicDescriptionEt.text.toString()
+                if (latStr.isEmpty() || lngStr.isEmpty()) {
+                    toast("请先选择目标位置")
+                    switchWidget.isChecked = false
+                    return@setOnClickListener
+                }
+
+                lifecycleScope.launch {
                     val savePrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
                     savePrefs.edit {
                         putString(KEY_CACHED_LAT, latitudeEt.text.toString())
                         putString(KEY_CACHED_LNG, longitudeEt.text.toString())
                         putString(KEY_CACHED_DESC, sematicDescriptionEt.text.toString())
                     }
-                    mViewModel.startWorker(
-                        longitude = lngStr.toDouble(),
+                    val historyBean = LocalLocationBean(
                         latitude = latStr.toDouble(),
-                        sematicDescription = sematicStr
+                        longitude = lngStr.toDouble(),
+                        sematicDescription = sematicStr,
+                        address = sematicStr
                     )
-                } else {
-                    mViewModel.stopWorker()
+                    mViewModel.insertHistory(historyBean)
                 }
+
+                mViewModel.startWorker(
+                    longitude = lngStr.toDouble(),
+                    latitude = latStr.toDouble(),
+                    sematicDescription = sematicStr
+                )
             }
         }
     }
@@ -110,7 +125,6 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
                 latitudeEt.setText(it.latitude.toString())
                 longitudeEt.setText(it.longitude.toString())
                 sematicDescriptionEt.setText(it.sematicDescription.toString())
-                mBinding.switchWidget.isChecked = false
             }
         }
         mViewModel.fakeImagePath.observe(this) {

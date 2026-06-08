@@ -128,7 +128,7 @@ class NavMainFragment : BaseFragment<FragmentNavMainBinding, MainViewModel>() {
             }
         }
         mViewModel.fakeImagePath.observe(this) {
-            if (it.isEmpty()) {
+            if (it.isNullOrEmpty()) {
                 mBinding.fakePhoto.load(R.drawable.img_empty_holder)
             } else
                 mBinding.fakePhoto.load(it)

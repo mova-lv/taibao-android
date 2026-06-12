@@ -40,9 +40,9 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
 
     private var mCurLat: Double = 0.0
     private var mCurLng: Double = 0.0
-    private var mCurAlt: Double = 1.0
+    private var mCurAlt: Double = 30.0 // 更真实的海拔高度（地面约30米）
     private var mCurBea = 0F
-    private var mSpeed = 0.0F/* 默认的速度，单位 m/s */
+    private var mSpeed = 0.5F/* 更真实的速度，模拟缓慢移动 0.5 m/s */
     override suspend fun doWork(): Result {
         addTestProviderNetwork()
         addTestProviderGPS()
@@ -122,7 +122,7 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
     private fun setLocationNetwork() {
         try {
             val location = Location(LocationManager.NETWORK_PROVIDER).apply {
-                accuracy = Criteria.ACCURACY_COARSE.toFloat() // 设定此位置的估计水平精度，以米为单位。
+                accuracy = 50.0F // 更合理的网络定位精度（50米，而不是ACCURACY_COARSE的几百米）
                 altitude = mCurAlt // 设置高度，在 WGS 84 参考坐标系中的米
                 latitude = mCurLat // 纬度（度）
                 longitude = mCurLng // 经度（度）
@@ -140,11 +140,11 @@ class MockLocationWorker(context: Context, parameters: WorkerParameters) :
     private fun setLocationGPS() {
         try {
             val bundle = Bundle()
-            bundle.putInt("satellites", 3)
+            bundle.putInt("satellites", 12) // 更真实的卫星数量（12颗，而不是3颗）
             val loc = Location(LocationManager.GPS_PROVIDER).apply {
-                accuracy = Criteria.ACCURACY_FINE.toFloat() // 设定此位置的估计水平精度，以米为单位。
+                accuracy = 5.0F // 更合理的GPS精度（5米，而不是ACCURACY_FINE的1米）
                 altitude = mCurAlt // 设置高度，在 WGS 84 参考坐标系中的米
-                bearing = mCurBea // 方向（度）
+                bearing = if (mSpeed > 0.1F) mCurBea else 0F // 有速度时才设置方向，否则为0
                 latitude = mCurLat // 纬度（度）
                 longitude = mCurLng // 经度（度）
                 time = System.currentTimeMillis() // 本地时间

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navMainFragment">
+    app:startDestination="@id/navToolsFragment">
     <fragment
         android:id="@+id/navMainFragment"
         android:name="com.taibao.app.NavMainFragment"
@@ -24,5 +24,10 @@
         android:name="com.taibao.app.NavMapFragment"
         android:label="地图选点模拟"
         tools:layout="@layout/fragment_nav_map" />
+    <fragment
+        android:id="@+id/navToolsFragment"
+        android:name="com.taibao.app.NavToolsFragment"
+        android:label="地图工具"
+        tools:layout="@layout/fragment_nav_tools" />
 
 </navigation>

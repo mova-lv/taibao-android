@@ -20,63 +20,59 @@ import tech.jour.template.common.ui.BaseActivity
 @AndroidEntryPoint
 class NavMainActivity : BaseActivity<ActivityMainNavBinding, EmptyViewModel>() {
 
-	override val mViewModel by viewModels<EmptyViewModel>()
+    override val mViewModel by viewModels<EmptyViewModel>()
 
-	private lateinit var navController: NavController
-	private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
-	companion object {
-		const val LAT_MSG_ID: String = "LAT_VALUE"
-		const val LNG_MSG_ID: String = "LNG_VALUE"
-		const val ALT_MSG_ID: String = "ALT_VALUE"
-	}
 
-	override fun initView() {
-		setSupportActionBar(mBinding.toolbar)
+    override fun initView() {
+        setSupportActionBar(mBinding.toolbar)
 
-		val host: NavHostFragment = supportFragmentManager
-			.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
-		navController = host.navController
+        val host: NavHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
+        navController = host.navController
 
-		appBarConfiguration = AppBarConfiguration(
-			setOf(
-				R.id.navMainFragment,
-//				R.id.nav_settings
-			),
-			mBinding.drawerLayout
-		)
-		setupActionBarWithNavController(navController, appBarConfiguration)
-		mBinding.navView.setupWithNavController(navController)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navMainFragment,
+                R.id.navToolsFragment
+            ),
+            mBinding.drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        mBinding.navView.setupWithNavController(navController)
 
-		navController.addOnDestinationChangedListener { controller, destination, arguments ->
-			when (destination.id) {
-				R.id.nav_dev -> {
-					try {
-						val intent = Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
-						startActivity(intent)
-					} catch (e: Exception) {
-						GoUtils.DisplayToast(
-							this@NavMainActivity,
-							resources.getString(R.string.app_error_dev)
-						)
-					}
-				}
-				else -> {}
-			}
-		}
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            when (destination.id) {
+                R.id.nav_dev -> {
+                    try {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        GoUtils.DisplayToast(
+                            this@NavMainActivity,
+                            resources.getString(R.string.app_error_dev)
+                        )
+                    }
+                }
 
-	}
+                else -> {}
+            }
+        }
 
-	override fun initObserve() {
-	}
+    }
 
-	override fun initRequestData() {
-		requestLocation {
-			it.d()
-		}
-	}
+    override fun initObserve() {
+    }
 
-	override fun onSupportNavigateUp(): Boolean {
-		return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-	}
+    override fun initRequestData() {
+        requestLocation {
+            it.d()
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 }

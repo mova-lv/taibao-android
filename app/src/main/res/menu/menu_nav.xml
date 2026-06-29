@@ -5,13 +5,13 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/navToolsFragment"
+            android:icon="@drawable/ic_menu_dev"
+            android:title="坐标转换" />
+        <item
             android:id="@+id/navMainFragment"
             android:icon="@drawable/ic_location_gray"
             android:title="@string/nav_menu_location_main" />
-        <!--    <item-->
-        <!--        android:id="@+id/nav_history"-->
-        <!--        android:icon="@drawable/ic_menu_history"-->
-        <!--        android:title="@string/nav_menu_history" />-->
     </group>
 
     <group>

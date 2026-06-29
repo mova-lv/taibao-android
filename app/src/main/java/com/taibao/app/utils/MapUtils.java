@@ -27,7 +27,17 @@ public class MapUtils {
      *
      */
     public static double[] wgs2bd09(double lng, double lat){
-        //第一次转换
+        double[] gcj = wgs2gcj02(lng, lat);
+        return gcj02tobd09(gcj[0], gcj[1]);
+    }
+
+    /**
+     * WGS84 坐标系 -> GCJ-02 坐标系（火星坐标系）
+     * @param lng 经度 (WGS84)
+     * @param lat 纬度 (WGS84)
+     * @return double[]{经度(GCJ-02), 纬度(GCJ-02)}
+     */
+    public static double[] wgs2gcj02(double lng, double lat) {
         double dlat = transformLat(lng - 105.0, lat - 35.0);
         double dlng = transformLon(lng - 105.0, lat - 35.0);
         double radlat = lat / 180.0 * pi;
@@ -38,15 +48,9 @@ public class MapUtils {
         dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * pi);
         double mglat = lat + dlat;
         double mglng = lng + dlng;
-
-        //第二次转换
-        double z = Math.sqrt(mglng * mglng + mglat * mglat) + 0.00002 * Math.sin(mglat * x_pi);
-        double theta = Math.atan2(mglat, mglng) + 0.000003 * Math.cos(mglng * x_pi);
-        double bd_lng = z * Math.cos(theta) + 0.0065;
-        double bd_lat = z * Math.sin(theta) + 0.006;
-        return new double[] { bd_lng, bd_lat };
+        return new double[] { mglng, mglat };
     }
-    
+
     public static double[] bd09togcj02(double bd_lon, double bd_lat) {
         double x = bd_lon - 0.0065;
         double y = bd_lat - 0.006;
@@ -57,6 +61,26 @@ public class MapUtils {
         return new double[] { gg_lng, gg_lat };
     }
 
+    /**
+     * GCJ-02 坐标系 -> BD-09 坐标系
+     * @param lng 经度 (GCJ-02)
+     * @param lat 纬度 (GCJ-02)
+     * @return double[]{经度(BD-09), 纬度(BD-09)}
+     */
+    public static double[] gcj02tobd09(double lng, double lat) {
+        double z = Math.sqrt(lng * lng + lat * lat) + 0.00002 * Math.sin(lat * x_pi);
+        double theta = Math.atan2(lat, lng) + 0.000003 * Math.cos(lng * x_pi);
+        double bd_lng = z * Math.cos(theta) + 0.0065;
+        double bd_lat = z * Math.sin(theta) + 0.006;
+        return new double[] { bd_lng, bd_lat };
+    }
+
+    /**
+     * GCJ-02 坐标系（火星坐标系） -> WGS84 坐标系
+     * @param lng 经度 (GCJ-02)
+     * @param lat 纬度 (GCJ-02)
+     * @return double[]{经度(WGS84), 纬度(WGS84)}
+     */
     public static double[] gcj02towgs84(double lng, double lat) {
         double dlat = transformLat(lng - 105.0, lat - 35.0);
         double dlng = transformLon(lng - 105.0, lat - 35.0);
